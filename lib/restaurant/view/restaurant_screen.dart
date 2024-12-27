@@ -1,6 +1,7 @@
 import 'package:actual/common/const/data.dart';
 import 'package:actual/restaurant/component/restaurant_card.dart';
 import 'package:actual/restaurant/model/restaurant_model.dart';
+import 'package:actual/restaurant/view/restaurant_detail_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -38,30 +39,17 @@ class RestaurantScreen extends StatelessWidget {
             return ListView.separated(
               itemBuilder: (_, index) {
                 final item = snapshot.data![index];
-                final pItem = RestaurantModel(
-                  id: item['id'],
-                  name: item['name'],
-                  thumbUrl: 'http://$ip${item['thumbUrl']}',
-                  tags: List<String>.from(item['tags']),
-                  priceRange: RestaurantPriceRange.values
-                      .firstWhere((e) => e.name == item['priceRange']),
-                  ratings: item['ratings'],
-                  ratingsCount: item['ratingsCount'],
-                  deliveryTime: item['deliveryTime'],
-                  deliveryFee: item['deliveryFee'],
-                );
+                final pItem = RestaurantModel.fromJson(json: item);
 
-                return RestaurantCard(
-                  image: Image.network(
-                    pItem.thumbUrl,
-                    fit: BoxFit.cover,
-                  ),
-                  name: pItem.name,
-                  tags: pItem.tags,
-                  ratingsCount: pItem.ratingsCount,
-                  ratings: pItem.ratings,
-                  deliveryTime: pItem.deliveryTime,
-                  deliveryFee: pItem.deliveryFee,
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => RestaurantDetailScreen(),
+                      ),
+                    );
+                  },
+                  child: RestaurantCard.fromModel(model: pItem),
                 );
               },
               separatorBuilder: (_, index) {
