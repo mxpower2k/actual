@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 class RestaurantScreen extends StatelessWidget {
   const RestaurantScreen({super.key});
 
-  Future<List> pageinateRestaurant() async {
+  Future<List> paginateRestaurant() async {
     final dio = new Dio();
 
     final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
@@ -28,10 +28,12 @@ class RestaurantScreen extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: FutureBuilder<List>(
-          future: pageinateRestaurant(),
+          future: paginateRestaurant(),
           builder: (context, AsyncSnapshot<List> snapshot) {
             if (!snapshot.hasData) {
-              return Container();
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
             }
 
             print(snapshot.data);
@@ -39,13 +41,13 @@ class RestaurantScreen extends StatelessWidget {
             return ListView.separated(
               itemBuilder: (_, index) {
                 final item = snapshot.data![index];
-                final pItem = RestaurantModel.fromJson(json: item);
+                final pItem = RestaurantModel.fromJson(item);
 
                 return GestureDetector(
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => RestaurantDetailScreen(),
+                        builder: (_) => RestaurantDetailScreen(id: pItem.id),
                       ),
                     );
                   },
